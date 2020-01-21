@@ -5,6 +5,12 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
+    <%if(user){%>
+      <p>Welcome <%= user.name%></p>
+      <%} else{%>
+        <p>please login</p>
+        <% } %>
+
     <h1>Welcome to AltCampus Laundry</h1>
     <p>Are you ready to clean your dirty clothes</p>
     <form action="/" method='POST'>
@@ -15,5 +21,13 @@
     </form>
     <a href="/login">Login</a><br>
     <a href="/logout">Logout</a>
+    <div class="bookings">
+      <% schedule.forEach(s => { %>
+        <%=s.userId.name%>
+        <%=s.date%>
+        <%=s.time%>
+        <hr>
+      <%})%>
+    </div>
   </body>
 </html>

@@ -2,20 +2,29 @@ var express = require('express');
 var router = express.Router();
 var User = require('../models/user')
 var middleware = require('../modules/middlewares')
-
+var Schedule = require('../models/schedule');
 /* GET home page. */
 
 //check booking form
-router.get('/', function(req, res, next) {
-  res.render('index');
+router.get('/',middleware.isAuthenticated, function(req, res, next) {
+  var user = req.body
+  Schedule.find()
+  .populate('userId','name')
+  .exec((err,schedule)=>{
+    console.log(schedule)
+    res.render('index',{user,schedule})
+  })
 });
 
-;
+
 
 //book booking
 router.post('/',middleware.checkUserLogged,(req,res,next) => {
-  console.log(req.body);
-  res.send('booked')
+  req.body.userId = req.session.userId;
+  Schedule.create(req.body,(err,schedule) => {
+    if(err) return next(err);
+    res.redirect('/')
+  })
 })
 
 
@@ -27,8 +36,8 @@ router.get('/register',(req,res,next)=> {
 router.post('/register',(req,res,next) => {
   User.create(req.body,(err,createdUser)=> {
     if(err) return next(err);
-    console.log(createdUser)
-    res.send('you are registered');
+    // console.log(createdUser)
+    res.redirect('/login')
   })
 })
 
@@ -47,7 +56,7 @@ router.post('/login',(req,res,next) => {
       req.flash('info', 'email isn\'t registered');
       return res.redirect('/login');
     } 
-    console.log(user.verifyPassword(user.password))
+    // console.log(user.verifyPassword(user.password))
     if(!user.verifyPassword(req.body.password)){
       req.flash('info', 'password is wrong');
       return res.redirect('/login');
