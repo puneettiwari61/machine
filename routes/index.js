@@ -3,27 +3,68 @@ var router = express.Router();
 var User = require('../models/user')
 var middleware = require('../modules/middlewares')
 var Schedule = require('../models/schedule');
+var moment = require("moment")
+
+// format the current date
+var now = moment();
+var currentDate = now.format("MMM DD YYYY")
+//twilio
+const accountSid = 'ACc84ba5d98aa5306edc0da205a29040eb';
+const authToken = '001abfe664430f257bac6416170aedc0';
+const client = require('twilio')(accountSid, authToken);
+
 /* GET home page. */
 
 //check booking form
 router.get('/',middleware.isAuthenticated, function(req, res, next) {
+  var msg = req.flash('info')[0] || null;
   var user = req.body
+  var id = req.session.userId?req.session.userId:'' ;
   Schedule.find()
-  .populate('userId','name')
+  .sort('bookingDate')
+  .populate('userId')
   .exec((err,schedule)=>{
-    console.log(schedule)
-    res.render('index',{user,schedule})
+    if(err) return next(err)
+    res.render('index',{user,schedule,id,msg})
   })
 });
 
+// redirect
+// delete schedule by the user
+// router.post('/redirect/:id', function(req, res, next){
+//   Schedule.findByIdAndDelete(req.params.id,(err,data)=>{
+//     if(err) return next(err);
+//     res.redirect('/')
+    
+//   })
+// })
+
+//changing isComplete to true for displaying history
+router.post("/redirect/:id", function(req, res, next){
+  Schedule.findByIdAndUpdate(req.params.id,{ $set: { isComplete : true }},(err,data)=>{
+    if(err) return next(err)
+    res.redirect('/')
+  })
+})
 
 
 //book booking
-router.post('/',middleware.checkUserLogged,(req,res,next) => {
+router.post('/',middleware.checkUserLogged,middleware.validDate,(req,res,next) => {
   req.body.userId = req.session.userId;
-  Schedule.create(req.body,(err,schedule) => {
+  Schedule.create(req.body,(err,createdSchedule) => {
     if(err) return next(err);
-    res.redirect('/')
+    Schedule.find()
+    .populate('userId','number')
+    .exec((err,schedule)=>{
+      client.messages
+      .create({
+         body: `Your slot of ${createdSchedule.time} on date${createdSchedule.date} is confirmed`,
+         from: '+13312001283',
+         to: '+918118840567'
+       })
+      .then(message => console.log(message.sid));
+      res.redirect('/');
+    })
   })
 })
 

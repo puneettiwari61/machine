@@ -5,15 +5,18 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var flash = require('connect-flash')
 var session = require('express-session')
+var middleware = require('./modules/middlewares')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var mongoose = require('mongoose');
 var MongoStore = require('connect-mongo')(session);
+ 
 //connect to database
 mongoose.connect('mongodb://localhost/machine',{ useNewUrlParser: true, useUnifiedTopology: true },
 (err) => {
 console.log('connected', err?false:true)  
 })
+mongoose.set('useCreateIndex', true)
 
 var app = express();
 
@@ -36,6 +39,7 @@ app.use(session({
 )
 
 app.use(flash())
+app.use(middleware.dateFormat)
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
