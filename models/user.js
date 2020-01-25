@@ -25,7 +25,11 @@ var userSchema = new Schema({
   payment: [{
     type: Schema.Types.ObjectId,
     ref: 'Payment'
-  }]
+  }],
+  blocked: {
+    type: Boolean,
+    default: false
+  }
 },{ timestamps: true})
 
 

@@ -17,11 +17,29 @@ exports.checkUserLogged = (req,res,next) => {
   }
 }
 
+
+exports.isBlocked = (req,res,next) => {
+  var email =  req.body.email
+  User.findOne({email: email},(err,blockedUser) =>{
+    // console.log(blockedUser)
+    if(err) return next(err)
+    if(blockedUser == null) return next();
+    if(blockedUser.blocked == true){
+    req.flash('blocked', 'OOPS, Your account has been blocked by Admin');
+    res.redirect('/login');
+    }
+    else return next()
+  })
+}
+
+
+
 exports.isAuthenticated = (req,res,next) => {
   if(req.session && req.session.userId){
     User.findById(req.session.userId,(err,user) => {
       if(err) return next(err);
       req.user = user
+      res.locals.profileUser = user;
       // console.log(user)
       next()
     })
@@ -56,7 +74,7 @@ exports.validDate = (req,res,next) => {
     var fd = dateFormat(req.body.bookingDate,'mm dd yy')
     Schedule.find({bookingDate: fd},(err,sd)=>{
       if(err) return next(err);
-      console.log(sd)
+      // console.log(sd)
       var tOrf = sd.every(s => {
         let diff = moment(req.body.time, 'HH:mm A').diff(moment(s.time, 'HH:mm A'))
         // console.log(req.body.time,s.time)
@@ -83,27 +101,27 @@ exports.validDate = (req,res,next) => {
 
 
 exports.isIncharge = (req,res,next) => {
-  if(req.session.userId == '5e2a8958bd01b908b4df51f4'){
-    next()
-  }
+  User.findById(req.session.userId,(err,admin) => {
+    if(admin.email == 'sahil@altcampus.io'){
+      next();
+    }
   else {
     req.flash('Incharge','You aren\'t Incharge')
     res.redirect('/')
   }
+})
 }
 
 exports.isAdmin = (req,res,next) => {
-  if(req.session.userId == '5e2ad6eaf9a3a41a245329d3'){
-    Schedule.find()
-    .populate('userId')
-    .exec((err,schedules) => {
-      if(err) next(err);
-      req.schedules = schedules;
+  User.findById(req.session.userId,(err,admin) => {
+    res.admin = admin
+    if(admin.email == 'surajsir@altcampus.io'){
       next();
-    } )
-  }
-  else {
-    req.flash('Incharge','You aren\'t Admin')
-    res.redirect('/')
-  }
+    }
+    else {
+      req.flash('Incharge','You aren\'t Admin')
+      res.redirect('/')
+    }
+  })
 }
+

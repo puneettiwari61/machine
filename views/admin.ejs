@@ -69,7 +69,7 @@
           <a href="" class="rnav-links">Instructions</a>
         </div>
         <div class="profile rnav-elements">
-          <a href="" class="rnav-links">Your Profile</a>
+          <a href="/users/profile/<%= adminData.id%>" class="rnav-links">Your Profile</a>
         </div>
         <div class="altcampus rnav-elements">
           <a href="" class="rnav-links">AltCampus</a>
@@ -138,7 +138,7 @@
           <a href="" class="mobilenav-links">Instructions</a>
         </div>
         <div class="mobilenav-elements">
-          <a href="" class="mobilenav-links">Your Profile</a>
+          <a href="/users/profile/<%= adminData.id%>" class="mobilenav-links">Your Profile</a>
         </div>
         <div class="mobilenav-elements">
           <a href="" class="mobilenav-links">AltCampus</a>
@@ -161,7 +161,8 @@
           <div class="single-user flex">
               <div class="single-user-name"><div><%= u.name %></div> <div class="payment-date"> <span style="font-weight: 700;">Last Payment Date</span> <span><%= u.payment.length ? u.payment[0].paymentDate : 'Note Done'%></span></div> </div>
             <div><div class="single-user-name"><%= u.email %></div>
-            <div class="pdl-div"><a href="/users/incharge/<%= u.id %>/payment" class="payment-done-link btn">Payment Received</a></div></div>
+            <div class="pdl-div"><a href="/users/incharge/<%= u.id %>/payment" class="payment-done-link btn">Payment Received</a><br><a href="/admins/<%= u.id %>/<%=u.blocked==true?'unblock':'block'%>" class="payment-done-link btn"><%=u.blocked==true?'Unblock':'Block User'%></a></div></div>
+            
           </div>
           <hr class="incharge-hr">
         <% }) %>
@@ -175,7 +176,7 @@
         <div class="single-user flex">
             <div class="single-user-name"><div><%= s.userId.name %></div> <div class="payment-date"> <span style="font-weight: 700;">Booking Date</span> <span><%= s.bookingDate%></span></div> 
             <div class="single-user-name">Time<span><%= s.time %></span></div></div>
-          <div class="pdl-div"><a href="/admin/<%= s.id %>/delete" class="payment-done-link btn">Delete</a></div></div>
+          <div class="pdl-div"><a href="/admins/<%= s.id %>/delete" class="payment-done-link btn">Delete</a></div></div>
         </div>
         <hr class="incharge-hr">
       <% }) %>

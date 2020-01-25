@@ -21,6 +21,7 @@ router.get('/',middleware.isAuthenticated, function(req, res, next) {
   var inchargeMsg = req.flash('Incharge')[0]||null
   var msg = req.flash('info')[0] || null;
   var timeMsg = req.flash('time')[0]||null
+  // var ext = req.flash('Extname')[0]||null
   // console.log(msg)
   var user = req.user ;
   var id = req.session.userId?req.session.userId:'' ;
@@ -91,11 +92,12 @@ router.post('/register',(req,res,next) => {
 
 //login
 router.get('/login',(req,res,next) => {
-  var msg = req.flash('info')[0];
-  res.render('login',{msg})
+  var msg = req.flash('info')[0] || null
+  var blockedMsg = req.flash('blocked')[0] || null
+  res.render('login',{msg,blockedMsg})
 })
 
-router.post('/login',(req,res,next) => {
+router.post('/login',middleware.isBlocked,(req,res,next) => {
   User.findOne({email:req.body.email}, (err,user)=> {
     if(err) return next(err);
     if(!user){

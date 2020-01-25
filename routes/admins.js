@@ -4,24 +4,45 @@ var User = require('../models/user')
 var middleware = require('../modules/middlewares')
 var Schedule = require('../models/schedule')
 
-router.get('/',(req,res,next) => {
+router.get('/' ,middleware.checkUserLogged,middleware.isAdmin,(req,res,next) => {
+  Schedule.find()
+  .populate('userId')
+  .exec((err,schedules) => {
+    if(err) next(err);
+    req.schedules = schedules;
+
   schedules = req.schedules || null;
   User.find()
   .populate('payment','paymentDate')
   .exec((err,users)=>{
     if(err) return next(err);
-    res.render('admin',{users, schedules})
+    var adminData = res.admin;
+    res.render('admin',{users, schedules, adminData})
   })
-})
+})})
 
 router.get('/:id/delete',(req,res,next) =>{
-  console.log(req.params.id)
-  Schedule.findById(req.params.id,(err, deleted)=>{
+  Schedule.findByIdAndDelete(req.params.id,(err, deleted)=>{
     if(err) next(err);
-    console.log(deleted)
     res.redirect('/admins');
   })
 })
 
+
+// blockuser
+router.get('/:id/block',(req,res,next) => {
+  userId = req.params.id
+    User.findByIdAndUpdate(req.params.id,   { "blocked": true },(err,blocked)=>{
+      res.redirect('/admins')
+    })
+  })
+
+// unblock user
+router.get('/:id/unblock',(req,res,next) => {
+  userId = req.params.id
+    User.findByIdAndUpdate(req.params.id,   { "blocked": false },(err,blocked)=>{
+      res.redirect('/admins')
+    })
+  })
 
 module.exports =  router;
