@@ -8,9 +8,10 @@ var session = require('express-session')
 var middleware = require('./modules/middlewares')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var adminRouter = require('./routes/admins')
 var mongoose = require('mongoose');
 var MongoStore = require('connect-mongo')(session);
- 
+
 //connect to database
 mongoose.connect('mongodb://localhost/machine',{ useNewUrlParser: true, useUnifiedTopology: true },
 (err) => {
@@ -40,9 +41,9 @@ app.use(session({
 
 app.use(flash())
 app.use(middleware.dateFormat)
-
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/admins', adminRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

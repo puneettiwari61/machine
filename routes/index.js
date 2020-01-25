@@ -4,6 +4,7 @@ var User = require('../models/user')
 var middleware = require('../modules/middlewares')
 var Schedule = require('../models/schedule');
 var moment = require("moment")
+var dateFormat = require("dateformat")
 
 // format the current date
 var now = moment();
@@ -17,15 +18,18 @@ const client = require('twilio')(accountSid, authToken);
 
 //check booking form
 router.get('/',middleware.isAuthenticated, function(req, res, next) {
+  var inchargeMsg = req.flash('Incharge')[0]||null
   var msg = req.flash('info')[0] || null;
-  var user = req.body
+  var timeMsg = req.flash('time')[0]||null
+  // console.log(msg)
+  var user = req.user ;
   var id = req.session.userId?req.session.userId:'' ;
   Schedule.find()
   .sort('bookingDate')
   .populate('userId')
   .exec((err,schedule)=>{
     if(err) return next(err)
-    res.render('index',{user,schedule,id,msg})
+    res.render('index',{user,schedule,id,msg,timeMsg,inchargeMsg})
   })
 });
 
@@ -51,6 +55,8 @@ router.post("/redirect/:id", function(req, res, next){
 //book booking
 router.post('/',middleware.checkUserLogged,middleware.validDate,(req,res,next) => {
   req.body.userId = req.session.userId;
+
+ 
   Schedule.create(req.body,(err,createdSchedule) => {
     if(err) return next(err);
     Schedule.find()
@@ -58,7 +64,7 @@ router.post('/',middleware.checkUserLogged,middleware.validDate,(req,res,next) =
     .exec((err,schedule)=>{
       client.messages
       .create({
-         body: `Your slot of ${createdSchedule.time} on date${createdSchedule.date} is confirmed`,
+         body: `Your slot of ${createdSchedule.time} on date${createdSchedule.bookingDate} is confirmed`,
          from: '+13312001283',
          to: '+918118840567'
        })

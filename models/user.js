@@ -21,7 +21,11 @@ var userSchema = new Schema({
   },
   number: {
     type: Number
-  }
+  },
+  payment: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Payment'
+  }]
 },{ timestamps: true})
 
 
