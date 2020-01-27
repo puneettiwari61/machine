@@ -115,7 +115,7 @@ exports.isIncharge = (req,res,next) => {
 exports.isAdmin = (req,res,next) => {
   User.findById(req.session.userId,(err,admin) => {
     res.admin = admin
-    if(admin.email == 'surajsir@altcampus.io'){
+    if(admin.email == 'imsuraj@altcampus.io'){
       next();
     }
     else {

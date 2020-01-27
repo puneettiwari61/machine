@@ -13,7 +13,7 @@ var mongoose = require('mongoose');
 var MongoStore = require('connect-mongo')(session);
 
 //connect to database
-mongoose.connect('mongodb://localhost/machine',{ useNewUrlParser: true, useUnifiedTopology: true },
+mongoose.connect('mongodb://utstwpmgdpg4gqncciwx:DOVEBRXqfrXUqMhlDhx8@bqtwwtro06ugz3w-mongodb.services.clever-cloud.com:27017/bqtwwtro06ugz3w',{ useNewUrlParser: true, useUnifiedTopology: true },
 (err) => {
 console.log('connected', err?false:true)  
 })
