@@ -23,6 +23,7 @@ router.get('/',middleware.isAuthenticated, function(req, res, next) {
   var timeMsg = req.flash('time')[0]||null
   // var ext = req.flash('Extname')[0]||null
   // console.log(msg)
+  var past = req.flash('past')[0] || null;
   var user = req.user ;
   var id = req.session.userId?req.session.userId:'' ;
   Schedule.find()
@@ -30,7 +31,7 @@ router.get('/',middleware.isAuthenticated, function(req, res, next) {
   .populate('userId')
   .exec((err,schedule)=>{
     if(err) return next(err)
-    res.render('index',{user,schedule,id,msg,timeMsg,inchargeMsg})
+    res.render('index',{user,schedule,id,msg,timeMsg,inchargeMsg,past})
   })
 });
 
@@ -54,7 +55,7 @@ router.post("/redirect/:id", function(req, res, next){
 
 
 //book booking
-router.post('/',middleware.checkUserLogged,middleware.validDate,(req,res,next) => {
+router.post('/',middleware.checkUserLogged,middleware.validDate,middleware.validTime,(req,res,next) => {
   req.body.userId = req.session.userId;
 
  

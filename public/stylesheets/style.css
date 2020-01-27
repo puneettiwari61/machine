@@ -354,6 +354,7 @@ font-size: 12px;
   body {
     font-size: 6px;
     /* padding: 1rem ; */
+    padding-bottom: 1rem;
   }
   .header {
     display: none;
@@ -419,6 +420,9 @@ font-size: 12px;
 
 
 /* -------------- login---------*/
+body {
+  padding-bottom: 1rem;
+}
 .login-form {
   margin: 3rem auto;
   width: 40%;

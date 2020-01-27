@@ -96,7 +96,7 @@
   </div>
   <div class="mobile">
       <div class="mobilenav-elements">
-          <figure>
+        <a href="/"><figure>
             <svg class="logo" width="" height="" viewBox="0 0 842 297" version="1.1" xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink">
               <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -140,7 +140,7 @@
                 </g>
               </g>
             </svg>
-          </figure>
+          </figure></a>
         </div>
       <div class="mobilenav-elements">
           <a href="" class="mobilenav-links">Instructions</a>
@@ -153,6 +153,13 @@
         </div>
         <div class="mobilenav-elements">
           <a href="" class="mobilenav-links">FAQs</a>
+        </div>
+        <div class="mobilenav-elements">
+          <%if(user){%>
+            <a href="/logout" class="mobilenav-links">Logout</a>
+            <%} else{%>
+              <a href="/login" class="mobilenav-links">Login</a><br>
+              <% } %>
         </div>
   </div>
 
@@ -177,6 +184,7 @@
         <span><%= msg %></span>
         <input type="text" name='time' class="timepicker" placeholder="Select Time">
         <span><%= timeMsg %></span>
+        <span><%= past %></span>
         <input type="submit" value="BOOK" class="btn">
       </form>
   </div>

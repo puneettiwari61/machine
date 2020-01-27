@@ -5,7 +5,8 @@ var moment = require("moment")
 // format the current date
 var now = moment();
 var currentDate = now.format("MMM DD YYYY")
-
+var currentDate2 = moment().format("MM DD YYYY hh:mm A")
+var currentDate3 = moment().format("MM DD YYYY")
 
 exports.checkUserLogged = (req,res,next) => {
   if(req.session && req.session.userId){
@@ -50,11 +51,12 @@ exports.isAuthenticated = (req,res,next) => {
     var id ='';
     var msg = null;
     var timeMsg = null;
+    var past = '';
     var inchargeMsg = req.flash('Incharge')[0]||null
     Schedule.find()
     .populate('userId','name')
     .exec((err,schedule)=>{
-      res.render('index',{user,schedule,id,msg,timeMsg,inchargeMsg})
+      res.render('index',{user,schedule,id,msg,timeMsg,inchargeMsg,past})
     })
   }
 }
@@ -96,6 +98,24 @@ exports.validDate = (req,res,next) => {
       }
     })
   }
+}
+
+
+
+
+// same day time validater
+
+exports.validTime = (req,res,next)=> {
+  if(moment(req.body.bookingDate).isSame(currentDate)){
+    if(moment(currentDate3 +' '+ req.body.time).isSameOrBefore(currentDate2)){
+      req.flash('past', 'You can\'t book a slot in past');
+      res.redirect('/');
+    } else return next();
+  }else return next()
+  // console.log(moment(currentDate3 +' '+ req.body.time).isSameOrBefore(currentDate2))
+  // console.log(currentDate3 + req.body.time)
+  // console.log(currentDate2);
+  // next();
 }
 
 
